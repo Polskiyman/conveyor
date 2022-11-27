@@ -5,10 +5,19 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
 )
+
+var delim = '\r' // for Windows
+
+func init() {
+	if runtime.GOOS != "windows" {
+		delim = '\n'
+	}
+}
 
 func main() {
 	var wg sync.WaitGroup
@@ -16,7 +25,7 @@ func main() {
 	in := bufio.NewReader(os.Stdin)
 
 	for {
-		v, err := in.ReadString('\r')
+		v, err := in.ReadString(byte(delim))
 		v = strings.Trim(v, "\r")
 		v = strings.Trim(v, "\n")
 		if err == io.EOF || v == "стоп" {
